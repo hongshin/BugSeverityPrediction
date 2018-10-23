@@ -1,0 +1,43 @@
+<project name="MarketBasket" default="build" basedir=".">
+	<property name="src" 	location="src"/>
+	<property name="build" 	location="build"/>
+	<property name="lib"	location="lib"/>
+
+	<path id="lib.path">
+		<pathelement location="${build}" />
+		<pathelement location="${lib}/weka-3-6-15.jar"/>
+		<pathelement location="${lib}/commons-configuration-1.10.jar"/>
+		<pathelement location="${lib}/commons-lang-2.6.jar"/>
+		<pathelement location="${lib}/commons-logging-1.2.jar"/>
+	</path>
+
+	<target name="init">
+		<mkdir dir="${build}"/>
+	</target>
+
+	<target name="build" depends="init">
+		<javac srcdir="${src}" destdir="${build}" debug="true" includeantruntime="false">
+			<classpath refid="lib.path"/>
+		</javac>
+	</target>
+
+	<target name="vector" depends="build">
+		<java classname="BugSeverityPrediction.Vectorization" fork="true" dir="." maxmemory="4096m">
+			<!-- <arg value="-d"/> -->
+			<classpath refid="lib.path"/>
+			<classpath location="."/>
+		</java>
+	</target>
+
+	<target name="classify" depends="vector">
+		<java classname="BugSeverityPrediction.Classification" fork="true" dir="." maxmemory="4096m">
+			<!-- <arg value="-d"/> -->
+			<classpath refid="lib.path"/>
+			<classpath location="."/>
+		</java>
+	</target>
+
+	<target name="clean">
+		<delete dir="${build}"/>
+	</target>
+</project>
